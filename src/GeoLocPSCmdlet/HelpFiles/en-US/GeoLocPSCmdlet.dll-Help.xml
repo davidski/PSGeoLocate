@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<helpItems schema="maml">
+
+<!-- v 1.0.0.9 -->
+<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+	<command:details>
+		<command:name>Get-GeoLoc</command:name>
+		<maml:description>
+			<maml:para>Retrieve geo-location data for an IP from the MaxMind database</maml:para>
+		</maml:description>
+		<maml:copyright>
+			<maml:para></maml:para>
+		</maml:copyright>
+		<command:verb>Get</command:verb>
+		<command:noun>GeoLoc</command:noun>
+		<dev:version></dev:version>
+	</command:details>
+	<maml:description>
+		<maml:para>The Get-GeoLoc command accepts an IP address (and, optionally, the path to the MaxMind database files) and returns an object with properties containing the Organization, Country Code, and Country Name.</maml:para>
+	</maml:description>
+	<!-- Cmdlet syntax section-->
+	<command:syntax>
+		<command:syntaxItem>
+			<maml:name>Get-GeoLoc</maml:name>
+			<command:parameter required="true" variableLength="true" globbing="false" pipelineInput="true (ByValue)" position="1">
+				<maml:name>IPAddr</maml:name>
+				<maml:description>
+					<maml:para>Specifies the IP address to look up in the MaxMind database. Must be an IPv4 address, in the format 111.111.111.111</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="true">string</command:parameterValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="false" position="2">
+				<maml:name>DBPath</maml:name>
+				<maml:description>
+					<maml:para>Specifies the folder containing the MaxMind data files.</maml:para>
+				</maml:description>
+				<command:parameterValue required="false" variableLength="true">string</command:parameterValue>
+			</command:parameter>
+			
+		</command:syntaxItem>
+	</command:syntax>
+	<!-- Cmdlet parameter section  -->
+	<command:parameters>
+		<command:parameter required="true" variableLength="true" globbing="false" pipelineInput="true (ByValue)" position="1">
+			<maml:name>IPAddr</maml:name>
+			<maml:description>
+				<maml:para>Specifies the IP address to look up in the MaxMind database. Must be an IPv4 address, in the format 111.111.111.111</maml:para>
+								
+			</maml:description>
+			<command:parameterValue required="true" variableLength="true">string</command:parameterValue>
+			<dev:type>
+				<maml:name>string</maml:name>
+				<maml:uri/>
+			</dev:type>
+			<dev:defaultValue></dev:defaultValue>
+		</command:parameter>
+		<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="true (ByPropertyName)" position="2">
+			<maml:name>DBPath</maml:name>
+			<maml:description>
+				<maml:para>Specifies the location of the MaxMind data files.</maml:para>
+								
+			</maml:description>
+			<command:parameterValue required="false" variableLength="true">string</command:parameterValue>
+			<dev:type>
+				<maml:name>string</maml:name>
+				<maml:uri/>
+			</dev:type>
+			<dev:defaultValue></dev:defaultValue>
+		</command:parameter>
+		
+	</command:parameters>
+	<!-- Input - Output section-->
+	<command:inputTypes>
+		<command:inputType>
+			<dev:type>
+				<maml:name>string</maml:name>
+				<maml:uri/>
+				<maml:description />
+			</dev:type>
+			<maml:description>
+				<maml:para>
+					<!-- description  -->
+					This cmdlet accepts one or more strings as input that populate the IPAddr and DBPath parameters
+				</maml:para>
+			</maml:description>
+		</command:inputType>
+	</command:inputTypes>
+	<command:returnValues>
+		<command:returnValue>
+			<dev:type>
+				<maml:name>GeoLoc</maml:name>
+				<maml:uri />
+				<maml:description />
+			</dev:type>   
+			<maml:description>
+				<maml:para>
+					<!-- description  -->
+					This cmdlet returns a GeoLoc object which is a simple object with ten properties - Organuzation, CountryCode, and CountryName - containing the Organization, Country Code, Country Name, Region Code, Region Name, Latitude, Longitude, DMA Metro Code, Area Code, and Postal Code
+				</maml:para>
+			</maml:description> 
+		</command:returnValue>
+	</command:returnValues>
+	<!-- Error section-->
+	<command:terminatingErrors />
+	<command:nonTerminatingErrors />
+		<!-- Notes section  -->
+	<maml:alertSet>
+		<maml:title></maml:title>
+		<maml:alert>
+			<maml:para></maml:para>
+		</maml:alert>
+		<maml:alert>
+			<maml:para></maml:para>
+		</maml:alert>
+	</maml:alertSet>
+	<!-- Example section  --> 
+	<command:examples>
+
+		<command:example>
+			<maml:title>
+				-------------------------- EXAMPLE 1 --------------------------
+			</maml:title> 
+			<maml:introduction>
+				<maml:para>C:\PS&gt;</maml:para>
+			</maml:introduction> 
+  			<dev:code>Get-GeoLoc -IPAddr 194.201.202.203 -DBPath c:\MaxMind\</dev:code>
+       			<dev:remarks>
+                                <maml:para>Description</maml:para>
+                                <maml:para>-----------</maml:para>
+  			        <maml:para>In this example, the commandlet retrieves geo-locational data for the IP 194.201.202.203 from the MaxMind database, using the MaxMind data files located in the c:\MaxMind\ directory.</maml:para>
+	                        <maml:para></maml:para>
+	                        <maml:para></maml:para>
+	                        <maml:para></maml:para>
+	                        <maml:para></maml:para>
+  			</dev:remarks>
+			<command:commandLines>
+				<command:commandLine>
+					<command:commandText></command:commandText>
+				</command:commandLine>
+			</command:commandLines>
+		</command:example>
+
+		<command:example>
+			<maml:title>
+				-------------------------- EXAMPLE 2 --------------------------
+			</maml:title> 
+			<maml:introduction>
+				<maml:para>C:\PS&gt;</maml:para>
+			</maml:introduction> 
+  			<dev:code>$loc = Get-GeoLoc 194.201.202.203</dev:code>
+       			<dev:remarks>
+                                <maml:para>Description</maml:para>
+                                <maml:para>-----------</maml:para>
+  			        <maml:para>In this example, the commandlet returns an object into $loc containing geo-locational data for the IP 194.201.202.203 from the MaxMind database. It assumes that the MaxMind data files are located in the current working directory.</maml:para>
+	                        <maml:para></maml:para>
+	                        <maml:para></maml:para>
+	                        <maml:para></maml:para>
+	                        <maml:para></maml:para>
+  			</dev:remarks>
+			<command:commandLines>
+				<command:commandLine>
+					<command:commandText></command:commandText>
+				</command:commandLine>
+			</command:commandLines>
+		</command:example>
+	</command:examples>
+	<!-- Link section  -->
+	<maml:relatedLinks>
+		<maml:navigationLink>
+			<maml:linkText>Get-Help GeoLocPSCmdlet</maml:linkText>
+			<maml:uri/>
+		</maml:navigationLink>
+
+	</maml:relatedLinks>
+</command:command>
+
+
+</helpItems>

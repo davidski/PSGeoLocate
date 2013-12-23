@@ -1,0 +1,49 @@
+TOPIC
+    about_GeoLocPSCmdlet
+
+SHORT DESCRIPTION
+    Provides background information about the MaxMind GeoLoc commandlet.
+    
+LONG DESCRIPTION
+    This topic provides information about the custom PowerShell commandlet 
+	which allows the user to retrieve geo-locational data for a given IP
+	address from the MaxMind database.
+
+                 
+  About the MaxMind database
+
+      The MaxMind database is a subscription-based set of data files which
+	  provide geographical data for IP addresses. The full set of MaxMind
+	  data includes information such as organization, region, city, lat-long,
+	  country code, and country. 
+
+
+  Windows PowerShell and the MaxMind Cmdlet
+
+      Windows PowerShell implements MaxMind functionality through the GeoLocPSCmdlet
+	  module for Windows PowerShell. The module loads a MaxMind-specific 
+      cmdlet, which you can use to retrieve geo-loc data from the MaxMind
+	  database.
+ 
+      When the GeoLocPSCmdlet module for Windows PowerShell is loaded, the following 
+      MaxMind cmdlet is available.
+
+     
+          Cmdlet                  Description
+          ---------               --------------------------------
+          Get-GeoLoc			  Retrieves geo-loc data from the MaxMind
+		                          database for a given IP address
+ 
+ 
+  Sample Commands
+   
+      A simple Windows PowerShell lookup of an IP Address might look like:
+     
+        C:\PS> Get-GeoLoc -IPAddr 100.200.300.400 -DBPath c:\maxmind\
+      
+	  Note that the IP address is a v4 address and is in the dotted-quad format. 
+	  The database path may point to a local or network location.
+
+SEE ALSO
+    Get-GeoLoc
+ 
