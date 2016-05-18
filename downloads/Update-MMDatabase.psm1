@@ -27,7 +27,7 @@
 
     #check if the file has been updated
     Write-Verbose "Checking update service."
-    Invoke-RestMethod -uri "http://updates.maxmind.com/app/update?license_key=Jc1dCDUoEmxd&md5=$hash" -OutFile "$DBPath\GeoIP.gz"
+    Invoke-RestMethod -uri "http://updates.maxmind.com/app/update?license_key=zM29P1iracQt&md5=$hash" -OutFile "$DBPath\GeoIP.gz"
     
     if ((Get-ChildItem "$DBPath\GeoIP.gz").length -gt 10000) {
         Write-Verbose "Found an update."
@@ -38,23 +38,23 @@
         Remove-Item "$DBPath\GeoIP.gz"
 
         #assume that the organizational DB has been updated and pull a copy of that down as well
-        Invoke-RestMethod -uri "http://download.maxmind.com/app/download_new?edition_id=111&suffix=tar.gz&license_key=Jc1dCDUoEmxd" -OutFile "$DBPath\GeoIPorg.tar.gz"
+        Invoke-RestMethod -uri "http://download.maxmind.com/app/download_new?edition_id=111&suffix=tar.gz&license_key=zM29P1iracQt" -OutFile "$DBPath\GeoIPorg.tar.gz"
     
         #Extract the organizational file
         Write-Verbose "Expanding GeoIP organizational data file."
         Expand-Archive "$DBPath\GeoIPorg.tar.gz" -OutputPath $DBPath
+        Read-Archive "$DBPath\GeoIPorg.tar" | where name -like "*.dat" | Expand-Archive -Flattenpaths -OutputPath $DBPath -force
         Remove-Item "$DBPath\GeoIPorg.tar.gz"
-        Expand-Archive -FlattenPaths -Index 1 -Force "$DBPath\GeoIPorg.tar" -ShowProgress -OutputPath $DBPath
         Remove-Item "$DBPath\GeoIPorg.tar"
 
         #Pull down the city DB
-        Invoke-RestMethod -uri "http://download.maxmind.com/app/download_new?edition_id=133&suffix=tar.gz&license_key=Jc1dCDUoEmxd" -OutFile "$DBPath\GeoIPcity.tar.gz"
+        Invoke-RestMethod -uri "http://download.maxmind.com/app/download_new?edition_id=133&suffix=tar.gz&license_key=zM29P1iracQt" -OutFile "$DBPath\GeoIPcity.tar.gz"
     
         #Extract the city file
         Write-Verbose "Expanding GeoIP city data file."
         Expand-Archive -Path "$DBPath\GeoIPcity.tar.gz" -FlattenPaths -ShowProgress -OutputPath $DBPath
+        Read-Archive "$DBPath\GeoIPcity.tar" | where name -like "*.dat" | Expand-Archive -Flattenpaths -OutputPath $DBPath -force
         Remove-Item "$DBPath\GeoIPcity.tar.gz"
-        Expand-Archive -FlattenPaths -Index 2 -Force "$DBPath\GeoIPcity.tar" -ShowProgress -OutputPath $DBPath
         Remove-Item "$DBPath\GeoIPcity.tar"
    
     } else {
