@@ -19,6 +19,9 @@
        $DBPath="D:\Program Files\SeattleChildrens\GeoLoc"
     )
 
+    $configuration = (Get-Content D:\scripts\parameters.conf) -join "`n" | ConvertFrom-Json
+    $license_key = $configuration.MaxMind_License_Key
+
     #calculate the MD5 hash (w/o dashes) of the existing file
     $md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
     $hash = [System.BitConverter]::ToString($md5.ComputeHash([System.IO.File]::ReadAllBytes("$DBPath\GeoIP.dat")))
@@ -27,7 +30,7 @@
 
     #check if the file has been updated
     Write-Verbose "Checking update service."
-    Invoke-RestMethod -uri "http://updates.maxmind.com/app/update?license_key=zM29P1iracQt&md5=$hash" -OutFile "$DBPath\GeoIP.gz"
+    Invoke-RestMethod -uri "http://updates.maxmind.com/app/update?license_key=$license_key&md5=$hash" -OutFile "$DBPath\GeoIP.gz"
     
     if ((Get-ChildItem "$DBPath\GeoIP.gz").length -gt 10000) {
         Write-Verbose "Found an update."
@@ -38,7 +41,7 @@
         Remove-Item "$DBPath\GeoIP.gz"
 
         #assume that the organizational DB has been updated and pull a copy of that down as well
-        Invoke-RestMethod -uri "http://download.maxmind.com/app/download_new?edition_id=111&suffix=tar.gz&license_key=zM29P1iracQt" -OutFile "$DBPath\GeoIPorg.tar.gz"
+        Invoke-RestMethod -uri "http://download.maxmind.com/app/download_new?edition_id=111&suffix=tar.gz&license_key=$license_key" -OutFile "$DBPath\GeoIPorg.tar.gz"
     
         #Extract the organizational file
         Write-Verbose "Expanding GeoIP organizational data file."
@@ -48,7 +51,7 @@
         Remove-Item "$DBPath\GeoIPorg.tar"
 
         #Pull down the city DB
-        Invoke-RestMethod -uri "http://download.maxmind.com/app/download_new?edition_id=133&suffix=tar.gz&license_key=zM29P1iracQt" -OutFile "$DBPath\GeoIPcity.tar.gz"
+        Invoke-RestMethod -uri "http://download.maxmind.com/app/download_new?edition_id=133&suffix=tar.gz&license_key=$license_key" -OutFile "$DBPath\GeoIPcity.tar.gz"
     
         #Extract the city file
         Write-Verbose "Expanding GeoIP city data file."
