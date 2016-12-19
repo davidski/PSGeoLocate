@@ -45,6 +45,9 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>GeoLocatePSCmdlet.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MaxMind.Db, Version=2.0.0.0, Culture=neutral, PublicKeyToken=66afa4cc5ae853ac, processorArchitecture=MSIL">
       <HintPath>..\packages\MaxMind.Db.2.1.3\lib\net45\MaxMind.Db.dll</HintPath>
@@ -87,8 +90,8 @@
     <None Include="GeoLocatePSCmdlet.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="HelpFiles\en-US\about_GeoLocPSCmdlet.help.txt" />
-    <Content Include="HelpFiles\en-US\GeoLocPSCmdlet.dll-Help.xml">
+    <Content Include="HelpFiles\en-US\about_GeoLocationPSCmdlet.help.txt" />
+    <Content Include="HelpFiles\en-US\GeoLocationPSCmdlet.dll-Help.xml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
