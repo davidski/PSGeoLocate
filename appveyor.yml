@@ -1,0 +1,10 @@
+﻿version: 1.0.{build}
+
+configuration: Release
+
+build:
+  project: ./src/GeoLocPSCmdlet.sln
+  verbosity: normal
+
+artifacts:
+- path: .\src\GeoLocPSCmdlet\bin\Release\GeoLocPSCmdlet.dll
