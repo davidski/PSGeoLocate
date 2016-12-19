@@ -1,8 +1,8 @@
 TOPIC
-    about_GeoLocPSCmdlet
+    about_GeoLocationPSCmdlet
 
 SHORT DESCRIPTION
-    Provides background information about the MaxMind GeoLoc commandlet.
+    Provides background information about the MaxMind GeoLocation commandlet.
     
 LONG DESCRIPTION
     This topic provides information about the custom PowerShell commandlet 

@@ -6,12 +6,12 @@ using System.Security;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GeoLocPSCmdlet")]
-[assembly: AssemblyDescription("PowerShell cmdlet wrapper for MaxMind geo-location service")]
+[assembly: AssemblyTitle("GeoLocactionPSCmdlet")]
+[assembly: AssemblyDescription("PowerShell wrapper for MaxMind GeoIP2 service")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Denali Advanced Integration")]
-[assembly: AssemblyProduct("GeoLocPSCmdlet")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCompany("NA")]
+[assembly: AssemblyProduct("GeoLocactionPSCmdlet")]
+[assembly: AssemblyCopyright("(c) 2016 David F. Severski")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
