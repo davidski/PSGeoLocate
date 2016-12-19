@@ -1,10 +1,15 @@
-﻿version: 1.0.{build}
+﻿skip_commits:
+  files:
+    - appveyor.yml
+    - README.md
+
+version: 1.0.{build}
 
 configuration: Release
 
 build:
-  project: ./src/GeoLocPSCmdlet.sln
+  project: ./src/GeoLocatePSCmdlet.sln
   verbosity: normal
 
 artifacts:
-- path: .\src\GeoLocPSCmdlet\bin\Release\GeoLocPSCmdlet.dll
+- path: .\src\GeoLocatePSCmdlet\bin\$(configuration)\GeoLocatePSCmdlet.dll
