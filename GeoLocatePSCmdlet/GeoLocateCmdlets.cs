@@ -6,7 +6,7 @@ using MaxMind.GeoIP2;
 
 
 [assembly: CLSCompliant(true)]
-namespace GeoLocatePSCmdlet
+namespace GeoLocate.Command
 {
 
     [Cmdlet(VerbsCommon.Get, "GeoLocation")]
@@ -37,27 +37,32 @@ namespace GeoLocatePSCmdlet
             set { _dbPath = value; }
         }
 
-        // DBType parameter is optional and cannot be read from the pipeline
-        [System.Management.Automation.Parameter(Position = 2, Mandatory = false, ValueFromPipeline = false, HelpMessage = "Enter a valid data file type")]
-        public dbType DBType { get; set; }
-
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-            if (!_dbPath.EndsWith(@"\"))
+            
+            // figure out the DBType based upon the passed file name
+            var dbFilename = System.IO.Path.GetFileNameWithoutExtension(_dbPath);
+            string[] parts = dbFilename.Split('-');
+            try
             {
-                _dbPath = _dbPath + @"\";
+
+                _dbType = (dbType)Enum.Parse(typeof(dbType), parts[1]);
+            }
+            catch (ArgumentException)
+            {
+                ThrowTerminatingError(new ErrorRecord(new ArgumentException("Unable to determine database type for " + _dbPath), "Invalid database type", ErrorCategory.InvalidArgument, this));
             }
 
             // verify that the specified path is valid
-            if (!Directory.Exists(_dbPath))
+            if (!File.Exists(_dbPath))
             {
                 // if path invalid, toss a PowerShell ErrorRecord and terminate
-                ThrowTerminatingError(new ErrorRecord(new DirectoryNotFoundException("Invalid Database Path"), "Invalid database path", ErrorCategory.InvalidArgument, this));
+                ThrowTerminatingError(new ErrorRecord(new FileNotFoundException("Invalid Database Path"), "Invalid database path", ErrorCategory.InvalidArgument, this));
             }
 
-            // While a common lookup service is used for all database tyepes, the response types differ
-            this.reader = new DatabaseReader(_dbPath + "GeoIP2-" + _dbType + ".mmdb");
+            // While a common lookup service is used for all database types, the response types differ
+            this.reader = new DatabaseReader(_dbPath);
 
         }
 
@@ -68,6 +73,7 @@ namespace GeoLocatePSCmdlet
             // return a GeoLocation object with properties set to the matching returned values
             switch (_dbType)
             {
+                // Country database
                 case dbType.Country:
                     var cresponse = reader.Country(_ipAddress);
                     GeoLocation clocation = new GeoLocation(
@@ -78,6 +84,7 @@ namespace GeoLocatePSCmdlet
                     WriteObject(clocation);
                     break;
 
+                // ISP database
                 case dbType.ISP:
                     var ispresponse = reader.Isp(_ipAddress);
                     GeoLocation isplocation = new GeoLocation(
@@ -86,6 +93,18 @@ namespace GeoLocatePSCmdlet
                     WriteObject(isplocation);
                     break;
 
+
+                // ISP database
+                case dbType.Domain:
+                    var domainresponse = reader.Domain(_ipAddress);
+                    GeoLocation domainlocation = new GeoLocation(
+                        ipAddress: _ipAddress,
+                        domain: domainresponse.Domain
+                    );
+                    WriteObject(domainlocation);
+                    break;
+
+                // Enterprise database
                 case dbType.Enterprise:
                     var entresponse = reader.Enterprise(_ipAddress);
                     GeoLocation entlocation = new GeoLocation(
@@ -94,12 +113,14 @@ namespace GeoLocatePSCmdlet
                         countryName: entresponse.Country.Name,
                         subdivisionCode: entresponse.MostSpecificSubdivision.IsoCode,
                         subdivisionName: entresponse.MostSpecificSubdivision.Name,
+                        city: entresponse.City.Name,
                         latitude: entresponse.Location.Latitude,
                         longitude: entresponse.Location.Longitude
                     );
                     WriteObject(entlocation);
                     break;
 
+                // All others (defaults to City)
                 default:
                     var cityresponse = reader.City(_ipAddress);
                     GeoLocation citylocation = new GeoLocation(
@@ -108,6 +129,7 @@ namespace GeoLocatePSCmdlet
                         countryName: cityresponse.Country.Name,
                         subdivisionCode: cityresponse.MostSpecificSubdivision.IsoCode,
                         subdivisionName: cityresponse.MostSpecificSubdivision.Name,
+                        city: cityresponse.City.Name,
                         latitude: cityresponse.Location.Latitude,
                         longitude: cityresponse.Location.Longitude
                     );
