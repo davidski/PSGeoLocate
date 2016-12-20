@@ -59,11 +59,6 @@ namespace GeoLocatePSCmdlet
 
         }
 
-        protected override void EndProcessing()
-        {
-            base.EndProcessing();
-        }
-
         protected override void ProcessRecord()
         {
 
@@ -120,10 +115,20 @@ namespace GeoLocatePSCmdlet
 
         }
 
+        // Called upon the normal end of processing
+        protected override void EndProcessing()
+        {
+            base.EndProcessing();
+            reader.Dispose();
+        }
+
+        // Called upon pipeline termination (user CTRL+C or error)
         protected override void StopProcessing()
         {
             base.StopProcessing();
+            reader.Dispose();
         }
+
     }
 
 }
