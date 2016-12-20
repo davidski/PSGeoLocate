@@ -1,72 +1,48 @@
-﻿namespace GeoLocatePSCmdlet
+﻿using System.Runtime.InteropServices;
+
+namespace GeoLocatePSCmdlet
 {
-    // Simple object with properties to hold the results
-    // from a MaxMind query. The query results are put into a 
-    // an object to make it easy to work with in PowerShell, 
-    // especially in pipelined commands.
-    public class GeoLocate
+
+    public enum dbType { City, Country, ISP, Enterprise }
+
+    // Simple object with properties to hold the results from a MaxMind query. 
+    // The query results are placed in an object to work with in PowerShell.
+    public class GeoLocation
     {
-        private string _countryCode = string.Empty;
-        private string _countryName = string.Empty;
-        private string _subdivisionCode = string.Empty;
-        private string _subdivisionName = string.Empty;
-        private string _city = string.Empty;
-        private string _postalCode = string.Empty;
-        private double? _latitude = double.NaN;
-        private double? _longitude = double.NaN;
+        // Default constructor
+        public GeoLocation() { }
 
-        public GeoLocate(string countryCode, string countryName, string subdivisionCode, string subdivisionName, string city, string postalCode, double? latitude, double? longitude)
+        // Constructor with named parameters, only ipAddress is requried
+        public GeoLocation(string ipAddress, 
+            [Optional] string countryCode, 
+            [Optional] string countryName, 
+            [Optional] string subdivisionCode, 
+            [Optional] string subdivisionName, 
+            [Optional] string city, 
+            [Optional] string postalCode, 
+            [Optional] double? latitude, 
+            [Optional] double? longitude)
         {
-            this._countryCode = countryCode;
-            this._countryName = countryName;
-            this._subdivisionCode = subdivisionCode;
-            this._subdivisionName = subdivisionName;
-            this._city = city;
-            this._postalCode = postalCode;
-            this._latitude = latitude;
-            this._longitude = longitude;
+            IPAddress   = ipAddress;
+            CountryCode = countryCode;
+            CountryName = countryName;
+            SubdivisionCode  = subdivisionCode;
+            SubdivisionName  = subdivisionName;
+            City        = city;
+            PostalCode  = postalCode;
+            Latitude    = latitude;
+            Longitude   = longitude;
         }
 
-        public string CountryCode
-        {
-            get { return _countryCode; }
-        }
-
-        public string CountryName
-        {
-            get { return _countryName; }
-        }
-
-        public string SubdivisionCode
-        {
-            get { return _subdivisionCode; }
-        }
-
-        public string SubdivisionName
-        {
-            get { return _subdivisionName; }
-        }
-
-        public string City
-        {
-            get { return _city; }
-        }
-
-        public string PostalCode
-        {
-            get { return _postalCode; }
-        }
-
-        public double? Latitude
-        {
-            get { return _latitude; }
-        }
-
-        public double? Longitude
-        {
-            get { return _longitude; }
-        }
-
-
+        // Properties
+        public string IPAddress { get; set; }
+        public string CountryCode { get; set; }
+        public string CountryName { get; set; }
+        public string SubdivisionCode { get; set; }
+        public string SubdivisionName { get; set; }
+        public string City { get; set; }
+        public string PostalCode { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
     }
 }

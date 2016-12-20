@@ -3,20 +3,22 @@ using System.Management.Automation;
 using System.IO;
 using MaxMind.GeoIP2;
 
+
 [assembly: CLSCompliant(true)]
 namespace GeoLocatePSCmdlet
 {
-    // Class inherits from PSCmdlet rather than Cmdlet so that we can
-    // access the current working directory path through the SessionState object
-    [Cmdlet(VerbsCommon.Get, "GeoLoc")]
+
+    [Cmdlet(VerbsCommon.Get, "GeoLocation")]
     [CLSCompliant(false)]
-    public class GeoLocateCmdlet : PSCmdlet
+    public class GeoLocatePSCmdlet : Cmdlet
     {
         private string _ipAddress = string.Empty;
         private string _dbPath = string.Empty;
+        private dbType _dbType = dbType.City;
+        private DatabaseReader reader;
 
         // IPAddress parameter is mandatory and can be read from the pipeline
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, HelpMessage = "Enter a valid IP Address")]
+        [System.Management.Automation.Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, HelpMessage = "Enter a valid IP Address")]
         [ValidatePattern(@"\b(?:\d{1,3}\.){3}\d{1,3}\b")]
         public string IPAddress
         {
@@ -24,18 +26,36 @@ namespace GeoLocatePSCmdlet
             set { _ipAddress = value; }
         }
 
-        // DBPath parameter is optional, and is only read from the command line, not the pipeline. Reading from the pipeline would
-        // require use of pipelined objects with named IPAddr and DBPath properties.
-        [Parameter(Position = 1, ValueFromPipeline = false, HelpMessage = "Enter a valid absolute or network shared DB path")]
+        // DBPath parameter is mandatory and cannot be read from the pipeline
+        [System.Management.Automation.Parameter(Position = 1, Mandatory = true, ValueFromPipeline = false, HelpMessage = "Enter a valid path to a MaxMind data file")]
         public string DBPath
         {
             get { return _dbPath; }
             set { _dbPath = value; }
         }
 
+        // DBType parameter is optional and cannot be read from the pipeline
+        [System.Management.Automation.Parameter(Position = 2, Mandatory = false, ValueFromPipeline = false, HelpMessage = "Enter a valid data file type")]
+        public dbType DBType { get; set; }
+
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
+            if (!_dbPath.EndsWith(@"\"))
+            {
+                _dbPath = _dbPath + @"\";
+            }
+
+            // verify that the specified path is valid
+            if (!Directory.Exists(_dbPath))
+            {
+                // if path invalid, toss a PowerShell ErrorRecord and terminate
+                ThrowTerminatingError(new ErrorRecord(new DirectoryNotFoundException("Invalid Database Path"), "Invalid database path", ErrorCategory.InvalidArgument, this));
+            }
+
+            // While a common lookup service is used for all database tyepes, the response types differ
+            this.reader = new DatabaseReader(_dbPath + "GeoIP2-" + _dbType + ".mmdb");
+
         }
 
         protected override void EndProcessing()
@@ -45,36 +65,58 @@ namespace GeoLocatePSCmdlet
 
         protected override void ProcessRecord()
         {
-            base.ProcessRecord();
-            // if no DBPath parameter was provided, use the current working directory
-            if (String.IsNullOrEmpty(_dbPath))
-            {
 
-                _dbPath = SessionState.Path.CurrentFileSystemLocation.Path;
+            // call the proper reader method based upon the dbType
+            // return a GeoLocation object with properties set to the matching returned values
+            switch (_dbType)
+            {
+                case dbType.Country:
+                    var cresponse = reader.Country(_ipAddress);
+                    GeoLocation clocation = new GeoLocation(
+                        ipAddress: _ipAddress,
+                        countryCode: cresponse.Country.IsoCode,
+                        countryName: cresponse.Country.Name
+                    );
+                    WriteObject(clocation);
+                    break;
+
+                case dbType.ISP:
+                    var ispresponse = reader.Isp(_ipAddress);
+                    GeoLocation isplocation = new GeoLocation(
+                        ipAddress: _ipAddress
+                    );
+                    WriteObject(isplocation);
+                    break;
+
+                case dbType.Enterprise:
+                    var entresponse = reader.Enterprise(_ipAddress);
+                    GeoLocation entlocation = new GeoLocation(
+                        ipAddress: _ipAddress,
+                        countryCode: entresponse.Country.IsoCode,
+                        countryName: entresponse.Country.Name,
+                        subdivisionCode: entresponse.MostSpecificSubdivision.IsoCode,
+                        subdivisionName: entresponse.MostSpecificSubdivision.Name,
+                        latitude: entresponse.Location.Latitude,
+                        longitude: entresponse.Location.Longitude
+                    );
+                    WriteObject(entlocation);
+                    break;
+
+                default:
+                    var cityresponse = reader.City(_ipAddress);
+                    GeoLocation citylocation = new GeoLocation(
+                        ipAddress: _ipAddress,
+                        countryCode: cityresponse.Country.IsoCode,
+                        countryName: cityresponse.Country.Name,
+                        subdivisionCode: cityresponse.MostSpecificSubdivision.IsoCode,
+                        subdivisionName: cityresponse.MostSpecificSubdivision.Name,
+                        latitude: cityresponse.Location.Latitude,
+                        longitude: cityresponse.Location.Longitude
+                    );
+                    WriteObject(citylocation);
+                    break;
             }
 
-            if (!_dbPath.EndsWith(@"\"))
-            {
-                _dbPath = _dbPath + @"\";
-            }
-
-            // verify that the specified path is valid
-            if (!Directory.Exists(_dbPath))
-            {
-                // if not, toss a PowerShell ErrorRecord and terminate
-                ThrowTerminatingError(new ErrorRecord(new DirectoryNotFoundException("Invalid Database Path"), "Invalid database path", ErrorCategory.InvalidArgument, this));
-            }
-
-            // MaxMind uses separate lookup services_ for each of the data files. For this version of the 
-            // cmdlet, the available data files are the Country and the City database
-            var reader = new DatabaseReader(_dbPath + "GeoIP2-City.mmdb");
-            //var reader = new DatabaseReader(_dbPath + "GeoIP2-Country.mmdb"))
-
-            var response = reader.City(_ipAddress);
-
-            // return a simple GeoLoc object with properties set to the values
-            // retrieved by the MaxMind library
-            WriteObject(new GeoLocate(response.Country.IsoCode, response.Country.Name, response.MostSpecificSubdivision.IsoCode, response.MostSpecificSubdivision.Name, response.City.Name, response.Postal.Code, response.Location.Latitude, response.Location.Longitude));
         }
 
         protected override void StopProcessing()
@@ -82,4 +124,5 @@ namespace GeoLocatePSCmdlet
             base.StopProcessing();
         }
     }
+
 }
