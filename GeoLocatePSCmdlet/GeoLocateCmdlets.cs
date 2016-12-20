@@ -10,6 +10,7 @@ namespace GeoLocatePSCmdlet
 
     [Cmdlet(VerbsCommon.Get, "GeoLocation")]
     [CLSCompliant(false)]
+    [OutputType("GeoLocation")]
     public class GeoLocatePSCmdlet : Cmdlet
     {
         private string _ipAddress = string.Empty;
