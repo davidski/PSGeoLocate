@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using System.Net;
 
 namespace GeoLocatePSCmdlet
 {
@@ -13,7 +14,7 @@ namespace GeoLocatePSCmdlet
         public GeoLocation() { }
 
         // Constructor with named parameters, only ipAddress is requried
-        public GeoLocation(string ipAddress, 
+        public GeoLocation(IPAddress ipAddress, 
             [Optional] string countryCode, 
             [Optional] string countryName, 
             [Optional] string subdivisionCode, 
@@ -35,7 +36,7 @@ namespace GeoLocatePSCmdlet
         }
 
         // Properties
-        public string IPAddress { get; set; }
+        public IPAddress IPAddress { get; set; }
         public string CountryCode { get; set; }
         public string CountryName { get; set; }
         public string SubdivisionCode { get; set; }
