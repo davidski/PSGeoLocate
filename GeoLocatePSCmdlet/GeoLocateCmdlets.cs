@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Management.Automation;
 using System.IO;
+using System.Net;
 using MaxMind.GeoIP2;
 
 
@@ -11,9 +12,9 @@ namespace GeoLocatePSCmdlet
     [Cmdlet(VerbsCommon.Get, "GeoLocation")]
     [CLSCompliant(false)]
     [OutputType("GeoLocation")]
-    public class GeoLocatePSCmdlet : Cmdlet
+    public class GeoLocateCommand : Cmdlet
     {
-        private string _ipAddress = string.Empty;
+        private IPAddress _ipAddress;
         private string _dbPath = string.Empty;
         private dbType _dbType = dbType.City;
         private DatabaseReader reader;
@@ -21,15 +22,16 @@ namespace GeoLocatePSCmdlet
         // IPAddress parameter is mandatory and can be read from the pipeline
         [System.Management.Automation.Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, HelpMessage = "Enter a valid IP Address")]
         [ValidatePattern(@"\b(?:\d{1,3}\.){3}\d{1,3}\b")]
-        public string IPAddress
+        public IPAddress IPAddress
         {
             get { return _ipAddress; }
             set { _ipAddress = value; }
         }
 
-        // DBPath parameter is mandatory and cannot be read from the pipeline
+        // Path parameter is mandatory and cannot be read from the pipeline
         [System.Management.Automation.Parameter(Position = 1, Mandatory = true, ValueFromPipeline = false, HelpMessage = "Enter a valid path to a MaxMind data file")]
-        public string DBPath
+        [Alias("PSPath")]
+        public string Path
         {
             get { return _dbPath; }
             set { _dbPath = value; }
